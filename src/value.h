@@ -27,6 +27,8 @@ public:
         return type;
     }
 
+    virtual std::string toString() const;
+
 };
 class BooleanValue : public Value{
 private:
@@ -36,6 +38,7 @@ public:
     bool getValue() const {
         return value;
     }
+    std::string toString() const override;
 
 };
 class NumericValue : public Value{
@@ -46,6 +49,7 @@ public:
     double getValue() const {
         return value;
     }
+    std::string toString() const override;
 };
 class StringValue : public Value{
 private:
@@ -55,11 +59,13 @@ public:
     std::string getValue() const {
         return value;
     }
+    std::string toString() const override;
 
 };
 class NilValue : public Value{
 public:
     NilValue() : Value(ValueType::NilValue) {}
+    std::string toString() const override;
 
 };
 class SymbolValue : public Value{
@@ -70,19 +76,21 @@ public:
     std::string getValue() const {
         return value;
     }
+    std::string toString() const override;
 
 };
 class PairValue : public Value{
 private:
     std::shared_ptr<Value> car, cdr;
 public:
-    PairValue(std::shared_ptr<Value> car, std::shared_ptr<Value> cdr) : Value(ValueType::PairValue), car{car}, cdr{cdr} {}
+    PairValue(std::shared_ptr<Value> car, std::shared_ptr<Value> cdr) : Value(ValueType::PairValue), car{std::move(car)}, cdr{std::move(cdr)} {}
     std::shared_ptr<Value> getCar() const {
         return car;
     }
     std::shared_ptr<Value> getCdr() const {
         return cdr;
     }
+    std::string toString() const override;
 
 };
 

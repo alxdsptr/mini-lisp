@@ -5,6 +5,8 @@
 #include "./value.h"
 
 int main() {
+//    auto* pair = new PairValue(std::make_shared<NumericValue>(1.0), std::make_shared<PairValue>(std::make_shared<NumericValue>(2.0), std::make_shared<PairValue>(std::make_shared<SymbolValue>("a"), std::make_shared<StringValue>("hello"))));
+//    std::cout << pair->toString() << std::endl;
     while (true) {
         try {
             std::cout << ">>> " ;
