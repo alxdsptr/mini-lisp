@@ -1,0 +1,18 @@
+1.为什么 Tokenizer::tokenize 接受的形参类型是 const std::string& 而不是 std::string？可不可以用 std::string？
+如果使用std::string的话，传入参数的过程中会创建一个新的std::string对象并且复制一遍传入的string中的内容，因此开销会比较大。
+因此虽然可以使用std::string，但是使用const std::string&能够提高性能，减小开销
+
+2.为什么使用 TokenPtr，也即 std::unique_ptr<Token>？如果改用 Token*，会有什么影响？
+改用Token*后tokenize函数里很多地方需要手动释放内存
+
+3.main 函数中 std::cout << *token 是如何实现的？
+token.h和token.cpp中实现了Token类的<<运算符重载：std::ostream& operator<<(std::ostream& os, const Token& token);
+调用了toString方法并传到输出流中
+
+4.当词法分析出现错误时，程序是如何进行错误处理的？
+主函数中使用try运行代码，rokenize函数里遇到错误时会抛出对应的异常(比如#后面跟着的不是t和f的时候会抛出"Unexpected charactore after #"的SyntaxError)，然后会在主函数里被捕获，并且输出对应的字符串
+
+5.使用 std::deque<TokenPtr> 相比 std::vector<TokenPtr> 的好处是什么？
+vector在push_back很多元素之后可能会需要resize，开销会比较大
+deque的push_back开销更低
+之后可能会需要在tokens的开头删除元素等等？用deque会比较方便
