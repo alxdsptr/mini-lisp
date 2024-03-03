@@ -2,6 +2,7 @@
 #include <string>
 
 #include "./tokenizer.h"
+#include "./value.h"
 
 int main() {
     while (true) {
