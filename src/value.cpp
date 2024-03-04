@@ -7,6 +7,10 @@
 
 using namespace std::literals;
 
+std::string Value::toString() const {
+    return std::string();
+}
+
 std::string BooleanValue::toString() const {
     return "#"s + (value ? "t" : "f");
 }
@@ -50,6 +54,6 @@ std::string PairValue::toString() const {
     result += ")";
     return result;
 }
-std::string Value::toString() const {
-    return std::string();
+std::ostream& operator<<(std::ostream& os, const Value& value){
+    return os << value.toString();
 }

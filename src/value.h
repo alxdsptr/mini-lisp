@@ -94,5 +94,7 @@ public:
 
 };
 
+using ValuePtr = std::shared_ptr<Value>;
+std::ostream& operator<<(std::ostream& os, const Value& value);
 
 #endif  // MINI_LISP_VALUE_H
