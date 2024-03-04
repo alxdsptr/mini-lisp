@@ -35,6 +35,9 @@ std::string NilValue::toString() const {
 std::string SymbolValue::toString() const {
     return value;
 }
+std::string BuiltinProcValue::toString() const {
+    return "#<procedure>";
+}
 
 std::string PairValue::toString() const {
     //如果pairvalue里面有null怎么办

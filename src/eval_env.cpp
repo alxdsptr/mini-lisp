@@ -28,6 +28,20 @@ ValuePtr EvalEnv::eval(ValuePtr expr) {
                     auto value = eval(v[2]);
                     vars[v[1]->toString()] = value;
                     return std::make_shared<NilValue>();
+                }else{
+                    if(!vars.contains(symbol)){
+                        throw LispError("procedure not found: " + symbol);
+                    }
+                    auto proc = vars[symbol];
+                    if(!proc->isProc()){
+                        throw LispError("procedure not found: " + symbol);
+                    }
+                    std::vector<ValuePtr> args;
+                    for(int i = 1; i < v.size(); i++){
+                        args.push_back(std::move(eval(v[i])));
+                    }
+                    auto val = static_cast<BuiltinProcValue*>(proc.get())->apply(args);
+                    return val;
                 }
             }
         }

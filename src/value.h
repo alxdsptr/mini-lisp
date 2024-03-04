@@ -15,7 +15,8 @@ enum class ValueType {
     StringValue,
     NilValue,
     SymbolValue,
-    PairValue
+    PairValue,
+    BuiltInProcValue
 };
 class Value{
 private:
@@ -23,13 +24,13 @@ private:
     std::set<ValueType> self_evaluating_types{
             ValueType::BooleanValue,
             ValueType::NumericValue,
-            ValueType::StringValue
+            ValueType::StringValue,
+            ValueType::BuiltInProcValue
     };
 
 protected:
     Value(ValueType type) : type{type} {}
 public:
-    using ValuePtr = std::shared_ptr<Value>;
     virtual ~Value() = default;
     ValueType getType() const {
         return type;
@@ -46,8 +47,28 @@ public:
     bool isSymbol() const{
         return type == ValueType::SymbolValue;
     }
+    bool isNum() const{
+        return type == ValueType::NumericValue;
+    }
+    bool isProc() const{
+        return type == ValueType::BuiltInProcValue;
+    }
     virtual std::string toString() const;
 
+};
+
+using ValuePtr = std::shared_ptr<Value>;
+using BuiltinFuncType = ValuePtr(const std::vector<ValuePtr>&);
+
+class BuiltinProcValue: public Value{
+private:
+    BuiltinFuncType* func;
+public:
+    BuiltinProcValue(BuiltinFuncType* func) : Value(ValueType::BuiltInProcValue), func{func} {}
+    ValuePtr apply(const std::vector<ValuePtr>& args) const {
+        return func(args);
+    }
+    std::string toString() const override;
 };
 class BooleanValue : public Value{
 private:
@@ -117,6 +138,5 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& os, const Value& value);
-using ValuePtr = std::shared_ptr<Value>;
 
 #endif  // MINI_LISP_VALUE_H
