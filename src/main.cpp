@@ -4,14 +4,17 @@
 #include "./tokenizer.h"
 #include "./value.h"
 #include "./parser.h"
+#include "eval_env.h"
 #include "rjsj_test.hpp"
 
 struct TestCtx {
+    EvalEnv env;
     std::string eval(std::string input) {
         auto tokens = Tokenizer::tokenize(input);
         Parser parser(std::move(tokens));
         auto value = parser.parse();
-        return value->toString();
+        auto result = env.eval(std::move(value));
+        return result->toString();
     }
 };
 
@@ -39,7 +42,8 @@ std::cout << a->toString() << '\n'
           << e->toString() << '\n'
           << f->toString() << std::endl;
           */
-    RJSJ_TEST(TestCtx, Lv2, Lv2Only);
+    RJSJ_TEST(TestCtx, Lv2, Lv3);
+    EvalEnv env;
     while (true) {
         try {
             std::cout << ">>> " ;
@@ -51,7 +55,8 @@ std::cout << a->toString() << '\n'
             auto tokens = Tokenizer::tokenize(line);
             auto parser = Parser(std::move(tokens));
             auto value = parser.parse();
-            std::cout << *value << std::endl;
+            auto res = env.eval(value);
+            std::cout << *res << std::endl;
 //            for (auto& token : tokens) {
 //                std::cout << *token << std::endl;
 //            }

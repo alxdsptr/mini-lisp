@@ -59,7 +59,6 @@ PairValue::PairValue(std::vector<std::shared_ptr<Value>> values) : Value(ValueTy
     PairValue* current = this;
     for(auto &val : values){
         if(val == values[0]){
-            // make current->car has the same type and value as val
             current->car = val;
         }else{
             current->cdr = std::make_shared<PairValue>();
@@ -69,6 +68,23 @@ PairValue::PairValue(std::vector<std::shared_ptr<Value>> values) : Value(ValueTy
     }
     current->cdr = std::make_shared<NilValue>();
 }
+std::vector<ValuePtr> PairValue::toVector() const {
+    std::vector<ValuePtr> result;
+    auto current = this;
+    while (current) {
+        result.push_back(current->car);
+        if (current->cdr->getType() == ValueType::PairValue) {
+            current = static_cast<PairValue*>(current->cdr.get());
+        } else if (current->cdr->getType() == ValueType::NilValue) {
+            break;
+        } else {
+            result.push_back(current->cdr);
+            break;
+        }
+    }
+    return result;
+}
+
 std::ostream& operator<<(std::ostream& os, const Value& value){
     return os << value.toString();
 }

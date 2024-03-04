@@ -7,7 +7,9 @@ add_executable(mini_lisp ${SOURCES}
         src/value.cpp
         src/value.h
         src/parser.cpp
-        src/parser.h)
+        src/parser.h
+        src/eval_env.cpp
+        src/eval_env.h)
 set_target_properties(
   mini_lisp
   PROPERTIES CXX_STANDARD 20
