@@ -3,6 +3,7 @@
 //
 
 #include "eval_env.h"
+#include "forms.h"
 
 ValuePtr EvalEnv::eval(ValuePtr expr) {
     if(expr->isSelfEvaluating()) {
@@ -17,17 +18,8 @@ ValuePtr EvalEnv::eval(ValuePtr expr) {
             if(v[0]->isSymbol()){
                 using namespace std::literals;
                 std::string symbol = v[0]->toString();
-                if(symbol == "define"s){
-                    if(v.size() != 3){
-                        throw LispError("define: wrong number of arguments");
-                    }
-                    if(!v[1]->isSymbol()){
-                        throw LispError("define: first argument must be a symbol");
-                    }
-                    //v[2]不合法的时候怎么办？
-                    auto value = eval(v[2]);
-                    vars[v[1]->toString()] = value;
-                    return std::make_shared<NilValue>();
+                if(SPECIAL_FORMS.contains(symbol)){
+                    return SPECIAL_FORMS.find(symbol)->second(v, *this);
                 }else{
                     if(!vars.contains(symbol)){
                         throw LispError("procedure not found: " + symbol);

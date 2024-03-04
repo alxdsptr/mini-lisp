@@ -11,7 +11,9 @@ add_executable(mini_lisp ${SOURCES}
         src/eval_env.cpp
         src/eval_env.h
         src/builtins.cpp
-        src/builtins.h)
+        src/builtins.h
+        src/forms.cpp
+        src/forms.h)
 set_target_properties(
   mini_lisp
   PROPERTIES CXX_STANDARD 20

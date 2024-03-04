@@ -23,6 +23,9 @@ public:
         vars["<"] = std::make_shared<BuiltinProcValue>(smaller);
         vars[">"] = std::make_shared<BuiltinProcValue>(bigger);
     }
+    void addVar(const std::string& name, ValuePtr value){
+        vars[name] = std::move(value);
+    }
     ValuePtr eval(ValuePtr expr);
 };
 
