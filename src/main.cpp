@@ -4,6 +4,16 @@
 #include "./tokenizer.h"
 #include "./value.h"
 #include "./parser.h"
+#include "rjsj_test.hpp"
+
+struct TestCtx {
+    std::string eval(std::string input) {
+        auto tokens = Tokenizer::tokenize(input);
+        Parser parser(std::move(tokens));
+        auto value = parser.parse();
+        return value->toString();
+    }
+};
 
 int main() {
     /*
@@ -14,6 +24,7 @@ int main() {
     ValuePtr c = std::make_shared<SymbolValue>("eq?");
     ValuePtr d = std::make_shared<StringValue>("Hello");
     ValuePtr e = std::make_shared<NilValue>();
+ValuePtr a = std::make_shared<PairValue>(std::vector<ValuePtr>{b, c, d, e});
     ValuePtr f = std::make_shared<PairValue>(
         c,
         std::make_shared<PairValue>(
@@ -28,6 +39,7 @@ std::cout << a->toString() << '\n'
           << e->toString() << '\n'
           << f->toString() << std::endl;
           */
+    RJSJ_TEST(TestCtx, Lv2, Lv2Only);
     while (true) {
         try {
             std::cout << ">>> " ;
@@ -37,7 +49,7 @@ std::cout << a->toString() << '\n'
                 std::exit(0);
             }
             auto tokens = Tokenizer::tokenize(line);
-            auto parser = Parser(tokens);
+            auto parser = Parser(std::move(tokens));
             auto value = parser.parse();
             std::cout << *value << std::endl;
 //            for (auto& token : tokens) {

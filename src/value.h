@@ -3,6 +3,7 @@
 //
 #include <memory>
 #include <string>
+#include <vector>
 
 #ifndef MINI_LISP_VALUE_H
 #define MINI_LISP_VALUE_H
@@ -17,6 +18,7 @@ enum class ValueType {
 };
 
 class Value{
+    using ValuePtr = std::shared_ptr<Value>;
 private:
     ValueType type;
 protected:
@@ -83,7 +85,9 @@ class PairValue : public Value{
 private:
     std::shared_ptr<Value> car, cdr;
 public:
+    PairValue() : Value(ValueType::PairValue) {};
     PairValue(std::shared_ptr<Value> car, std::shared_ptr<Value> cdr) : Value(ValueType::PairValue), car{std::move(car)}, cdr{std::move(cdr)} {}
+    PairValue(std::vector<std::shared_ptr<Value>>);
     std::shared_ptr<Value> getCar() const {
         return car;
     }
@@ -94,7 +98,7 @@ public:
 
 };
 
-using ValuePtr = std::shared_ptr<Value>;
 std::ostream& operator<<(std::ostream& os, const Value& value);
+using ValuePtr = std::shared_ptr<Value>;
 
 #endif  // MINI_LISP_VALUE_H

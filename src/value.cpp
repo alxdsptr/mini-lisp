@@ -37,6 +37,7 @@ std::string SymbolValue::toString() const {
 }
 
 std::string PairValue::toString() const {
+    //如果pairvalue里面有null怎么办
     std::string result = "(";
     auto current = this;
     while (current) {
@@ -53,6 +54,20 @@ std::string PairValue::toString() const {
     }
     result += ")";
     return result;
+}
+PairValue::PairValue(std::vector<std::shared_ptr<Value>> values) : Value(ValueType::PairValue){
+    PairValue* current = this;
+    for(auto &val : values){
+        if(val == values[0]){
+            // make current->car has the same type and value as val
+            current->car = val;
+        }else{
+            current->cdr = std::make_shared<PairValue>();
+            current = static_cast<PairValue*>(current->cdr.get());
+            current->car = val;
+        }
+    }
+    current->cdr = std::make_shared<NilValue>();
 }
 std::ostream& operator<<(std::ostream& os, const Value& value){
     return os << value.toString();
