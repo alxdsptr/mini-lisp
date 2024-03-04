@@ -18,15 +18,10 @@ enum class ValueType {
     PairValue,
     BuiltInProcValue
 };
+extern const std::set<ValueType> self_evaluating_types;
 class Value{
 private:
     ValueType type;
-    std::set<ValueType> self_evaluating_types{
-            ValueType::BooleanValue,
-            ValueType::NumericValue,
-            ValueType::StringValue,
-            ValueType::BuiltInProcValue
-    };
 
 protected:
     Value(ValueType type) : type{type} {}
@@ -53,12 +48,25 @@ public:
     bool isProc() const{
         return type == ValueType::BuiltInProcValue;
     }
+    bool isBool() const{
+        return type == ValueType::BooleanValue;
+    }
     virtual std::string toString() const;
 
 };
 
 using ValuePtr = std::shared_ptr<Value>;
 using BuiltinFuncType = ValuePtr(const std::vector<ValuePtr>&);
+
+class LambdaValue : public Value{
+private:
+    std::vector<std::string> params;
+    std::vector<ValuePtr> body;
+public:
+    std::string toString() const override;
+    LambdaValue(std::vector<std::string> &params, std::vector<ValuePtr> &body) :
+          Value(ValueType::BuiltInProcValue), params{std::move(params)}, body{std::move(body)} {}
+};
 
 class BuiltinProcValue: public Value{
 private:

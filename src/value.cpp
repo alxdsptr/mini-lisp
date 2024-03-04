@@ -7,6 +7,13 @@
 
 using namespace std::literals;
 
+const std::set<ValueType> self_evaluating_types{
+        ValueType::BooleanValue,
+        ValueType::NumericValue,
+        ValueType::StringValue,
+        ValueType::BuiltInProcValue
+};
+
 std::string Value::toString() const {
     return std::string();
 }
@@ -86,6 +93,10 @@ std::vector<ValuePtr> PairValue::toVector() const {
         }
     }
     return result;
+}
+
+std::string LambdaValue::toString() const {
+    return "#<procedure>";
 }
 
 std::ostream& operator<<(std::ostream& os, const Value& value){
