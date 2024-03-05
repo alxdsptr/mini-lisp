@@ -14,8 +14,8 @@ const std::unordered_map<std::string, SpecialFormType*> SPECIAL_FORMS{
         {"lambda", lambdaForm}
 };
 ValuePtr defineForm(const std::vector<ValuePtr>& args, EvalEnv& env){
-    if(args.size() != 3){
-        throw LispError("define: wrong number of arguments");
+    if(args.size() < 3){
+        throw LispError("define: too few arguments");
     }
     if(args[1]->isList()){
         std::vector<ValuePtr> v = static_cast<PairValue*>(args[1].get())->toVector();
@@ -28,7 +28,7 @@ ValuePtr defineForm(const std::vector<ValuePtr>& args, EvalEnv& env){
         }
         std::vector<ValuePtr> body;
         std::copy(args.begin() + 2, args.end(), std::back_inserter(body));
-        env.addVar(v[0]->toString(), std::make_shared<LambdaValue>(params, body));
+        env.addVar(v[0]->toString(), std::make_shared<LambdaValue>(params, body, env.shared_from_this()));
         return std::make_shared<NilValue>();
     }
     if(!args[1]->isSymbol()){
@@ -91,5 +91,5 @@ ValuePtr lambdaForm(const std::vector<ValuePtr>& args, EvalEnv& env){
 //        body.push_back(args[i]);
 //    }
     std::copy(args.begin() + 2, args.end(), std::back_inserter(body));
-    return std::make_shared<LambdaValue>(params, body);
+    return std::make_shared<LambdaValue>(params, body, env.shared_from_this());
 }

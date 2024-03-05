@@ -4,6 +4,8 @@
 
 #include "value.h"
 #include <iomanip>
+#include "error.h"
+#include "eval_env.h"
 
 using namespace std::literals;
 
@@ -97,6 +99,20 @@ std::vector<ValuePtr> PairValue::toVector() const {
 
 std::string LambdaValue::toString() const {
     return "#<procedure>";
+}
+ValuePtr LambdaValue::apply(const std::vector<ValuePtr>& args) {
+    if(args.size() != params.size()){
+        throw LispError("wrong number of arguments");
+    }
+    env = std::make_shared<EvalEnv>(parent);
+    for(int i = 0; i < params.size(); i++){
+        env->addVar(params[i], args[i]);
+    }
+    ValuePtr res;
+    for(auto &i : body){
+        res = env->eval(i);
+    }
+    return res;
 }
 
 std::ostream& operator<<(std::ostream& os, const Value& value){

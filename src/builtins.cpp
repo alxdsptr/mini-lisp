@@ -98,3 +98,14 @@ ValuePtr print(const std::vector<ValuePtr>& args){
     std::cout << args[0]->toString() << std::endl;
     return std::make_shared<NilValue>();
 }
+
+const std::vector<std::pair<std::string, BuiltinFuncType*>> BUILTINS{
+    {"+", &add},
+    {"-", &minus},
+    {"*", &mul},
+    {"/", &divide},
+    {"print", &print},
+    {"=", &equal_num},
+    {"<", &smaller},
+    {">", &bigger}
+};

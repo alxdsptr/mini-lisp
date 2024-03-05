@@ -9,6 +9,7 @@
 #ifndef MINI_LISP_VALUE_H
 #define MINI_LISP_VALUE_H
 
+class EvalEnv;
 enum class ValueType {
     BooleanValue,
     NumericValue,
@@ -16,7 +17,8 @@ enum class ValueType {
     NilValue,
     SymbolValue,
     PairValue,
-    BuiltInProcValue
+    BuiltInProcValue,
+    LambdaValue
 };
 extern const std::set<ValueType> self_evaluating_types;
 class Value{
@@ -51,6 +53,9 @@ public:
     bool isBool() const{
         return type == ValueType::BooleanValue;
     }
+    bool isLambda() const{
+        return type == ValueType::LambdaValue;
+    }
     virtual std::string toString() const;
 
 };
@@ -62,10 +67,13 @@ class LambdaValue : public Value{
 private:
     std::vector<std::string> params;
     std::vector<ValuePtr> body;
+    std::shared_ptr<const EvalEnv> parent;
+    std::shared_ptr<EvalEnv> env;
 public:
     std::string toString() const override;
-    LambdaValue(std::vector<std::string> &params, std::vector<ValuePtr> &body) :
-          Value(ValueType::BuiltInProcValue), params{std::move(params)}, body{std::move(body)} {}
+    LambdaValue(std::vector<std::string> &params, std::vector<ValuePtr> &body, std::shared_ptr<const EvalEnv> env) :
+          Value(ValueType::LambdaValue), params{std::move(params)}, body{std::move(body)}, parent{std::move(env)} {}
+    ValuePtr apply(const std::vector<ValuePtr>& args);
 };
 
 class BuiltinProcValue: public Value{

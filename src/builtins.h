@@ -17,5 +17,7 @@ ValuePtr equal_num(const std::vector<ValuePtr>& args);
 ValuePtr smaller(const std::vector<ValuePtr>& args);
 ValuePtr bigger(const std::vector<ValuePtr>& args);
 
+extern const std::vector<std::pair<std::string, BuiltinFuncType*>> BUILTINS;
+
 
 #endif  // MINI_LISP_BUILTINS_H

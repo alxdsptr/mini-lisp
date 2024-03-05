@@ -8,12 +8,13 @@
 #include "rjsj_test.hpp"
 
 struct TestCtx {
-    EvalEnv env;
+//    std::shared_ptr<EvalEnv> env = std::make_shared<EvalEnv>(BUILTINS, nullptr);
+    std::shared_ptr<EvalEnv> env = std::make_shared<EvalEnv>();
     std::string eval(std::string input) {
         auto tokens = Tokenizer::tokenize(input);
         Parser parser(std::move(tokens));
         auto value = parser.parse();
-        auto result = env.eval(std::move(value));
+        auto result = env->eval(std::move(value));
         return result->toString();
     }
 };
@@ -42,8 +43,8 @@ std::cout << a->toString() << '\n'
           << e->toString() << '\n'
           << f->toString() << std::endl;
           */
-    RJSJ_TEST(TestCtx, Lv2, Lv3, Lv4, Lv5);
-    EvalEnv env;
+    RJSJ_TEST(TestCtx, Lv2, Lv3, Lv4, Lv5, Lv6);
+    std::shared_ptr<EvalEnv> env = std::make_shared<EvalEnv>();
     while (true) {
         try {
             std::cout << ">>> " ;
@@ -55,7 +56,7 @@ std::cout << a->toString() << '\n'
             auto tokens = Tokenizer::tokenize(line);
             auto parser = Parser(std::move(tokens));
             auto value = parser.parse();
-            auto res = env.eval(value);
+            auto res = env->eval(value);
             std::cout << *res << std::endl;
 //            for (auto& token : tokens) {
 //                std::cout << *token << std::endl;

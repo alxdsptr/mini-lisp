@@ -9,24 +9,26 @@
 #include "builtins.h"
 #include <unordered_map>
 
-class EvalEnv {
+class EvalEnv : public std::enable_shared_from_this<EvalEnv>{
 private:
     std::unordered_map<std::string, ValuePtr> vars;
+    std::shared_ptr<const EvalEnv> parent;
 public:
-    EvalEnv(){
-        vars["+"] = std::make_shared<BuiltinProcValue>(add);
-        vars["print"] = std::make_shared<BuiltinProcValue>(print);
-        vars["-"] = std::make_shared<BuiltinProcValue>(minus);
-        vars["*"] = std::make_shared<BuiltinProcValue>(mul);
-        vars["/"] = std::make_shared<BuiltinProcValue>(divide);
-        vars["="] = std::make_shared<BuiltinProcValue>(equal_num);
-        vars["<"] = std::make_shared<BuiltinProcValue>(smaller);
-        vars[">"] = std::make_shared<BuiltinProcValue>(bigger);
+    EvalEnv(std::shared_ptr<const EvalEnv> parent = nullptr) : parent{std::move(parent)}{
+        if(parent == nullptr){
+            for(auto const &i : BUILTINS){
+                vars[i.first] = std::make_shared<BuiltinProcValue>(i.second);
+            }
+        }
     }
     void addVar(const std::string& name, ValuePtr value){
         vars[name] = std::move(value);
     }
+    ValuePtr lookupBinding(std::string &symbol) const;
     ValuePtr eval(ValuePtr expr);
+    void setParent(std::shared_ptr<const EvalEnv> p){
+        parent = std::move(p);
+    }
 };
 
 #endif  // MINI_LISP_EVAL_ENV_H
